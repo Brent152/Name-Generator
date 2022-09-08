@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import 'bootstrap/dist/css/bootstrap.css';
 import Table from 'react-bootstrap/Table';
 import translate from 'translate';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button'
+import Card from 'react-bootstrap/Card'
+import './App.css';
 
 
 function App() {
@@ -10,21 +14,212 @@ function App() {
   // Set up translator
   translate.engine = "google";
 
-  let languages = [
-    'Spanish',
+  const englishAlphabetLanguages = [
+    'Afrikaans',
+    'Albanian',
+    'Azerbaijani',
+    'Basque',
+    'Bosnian',
+    'Catalan',
+    'Corsican',
+    'Croatian',
+    'Czech',
+    'Danish',
+    'Dutch',
+    'Esperanto',
+    'Estonian',
+    'Finnish',
     'French',
+    'Galician',
     'German',
+    'Haitian Creole',
+    'Hausa',
+    'Hungarian',
+    'Icelandic',
+    'Igbo',
+    'Indonesian',
+    'Irish',
     'Italian',
+    'Javanese',
+    'Kinyarwanda',
+    'Kurdish',
+    'Latin',
+    'Latvian',
+    'Lithuanian',
+    'Luxembourgish',
+    'Malagasy',
+    'Malay',
+    'Maltese',
+    'Maori',
+    'Norwegian',
+    'Nyanja',
+    'Polish',
+    'Portuguese',
+    'Romanian',
+    'Samoan',
+    'Gaelic',
+    'Serbian',
+    'Shona',
+    'Slovak',
+    'Slovenian',
+    'Somali',
+    'Spanish',
+    'Sundanese',
+    'Swahili',
+    'Swedish',
+    'Tagalog',
+    'Turkish',
+    'Turkmen',
+    'Uzbek',
+    'Vietnamese',
+    'Welsh',
+    'Xhosa',
+    'Yoruba',
+    'Zulu',
+  ]
+
+  const languages = [
+    'Afrikaans',
+    'Albanian',
+    'Amharic',
+    'Arabic',
+    'Armenian',
+    'Azerbaijani',
+    'Basque',
+    'Belarusian',
+    'Bengali',
+    'Bosnian',
+    'Bulgarian',
+    'Catalan',
+    'Chinese',
+    'Corsican',
+    'Croatian',
+    'Czech',
+    'Danish',
+    'Dutch',
+    'Esperanto',
+    'Estonian',
+    'Finnish',
+    'French',
+    'Galician',
+    'Georgian',
+    'German',
+    'Greek',
+    'Gujarati',
+    'Haitian Creole',
+    'Hausa',
+    'Hebrew',
+    'Hindi',
+    'Hungarian',
+    'Icelandic',
+    'Igbo',
+    'Indonesian',
+    'Irish',
+    'Italian',
+    'Japanese',
+    'Javanese',
+    'Kannada',
+    'Kazakh',
+    'Kinyarwanda',
+    'Korean',
+    'Kurdish',
+    'Kyrgyz',
+    'Lao',
+    'Latin',
+    'Latvian',
+    'Lithuanian',
+    'Luxembourgish',
+    'Macedonian',
+    'Malagasy',
+    'Malay',
+    'Malayalam',
+    'Maltese',
+    'Maori',
+    'Marathi',
+    'Mongolian',
+    'Nepali',
+    'Norwegian',
+    'Nyanja',
+    'Pashto',
+    'Persian',
+    'Polish',
+    'Portuguese',
+    'Punjabi',
+    'Romanian',
+    'Russian',
+    'Samoan',
+    'Gaelic',
+    'Serbian',
+    'Shona',
+    'Sindhi',
+    'Sinhala',
+    'Slovak',
+    'Slovenian',
+    'Somali',
+    'Spanish',
+    'Sundanese',
+    'Swahili',
+    'Swedish',
+    'Tagalog',
+    'Tajik',
+    'Tamil',
+    'Tatar',
+    'Telugu',
+    'Thai',
+    'Turkish',
+    'Turkmen',
+    'Ukrainian',
+    'Urdu',
+    'Uyghur',
+    'Uzbek',
+    'Vietnamese',
+    'Welsh',
+    'Xhosa',
+    'Yiddish',
+    'Yoruba',
+    'Zulu',
   ];
 
-  let words = [
-    'Write',
-    'Book',
-    'Person'
-  ];
+  const [words, setWords] = useState(() => {
+    return [
+      'Enter',
+      'Custom',
+      'Words',
+      'Above',
+    ]
 
+  });
 
-  const translateWords = async (words, languages) => {
+  const [reload, setReload] = useState(() => {
+    return 0;
+  })
+
+  const [showFilter, setShowFilter] = useState(() => {
+    return false;
+  });
+
+  const [languageSelection, setLanguageSelection] = useState(() => {
+    let temp = {};
+    for (const language of languages) {
+      if (englishAlphabetLanguages.includes(language)) {
+        temp[language] = 1;
+      } else {
+        temp[language] = 0;
+      }
+    }
+    return temp;
+  });
+
+  const pingPage = async (timeBetween) => {
+    setTimeout(function () {
+      setReload(reload + 1);
+      console.log(" --- Page Reload --- ")
+      setShowFilter(true);
+      setShowFilter(false);
+    }, (timeBetween * 1000));
+  }
+
+  const translateWords = (languages, words) => {
     let curTranslations = {};
     languages.forEach(async (language) => {
       curTranslations[language] = {};
@@ -32,46 +227,123 @@ function App() {
         curTranslations[language][word] = await translate(word, language)
       });
     });
-    // console.log(curTranslations);
-    // setTranslations(curTranslations);
+    pingPage(2);
+    return curTranslations;
   }
 
-  // const [translations, setTranslations] = useState(translateWords(words, languages));
+  const [translations, setTranslations] = useState(() => {
+    return translateWords(languages, words);
+  });
+
 
 
   return (
-    <div className="App" >
-      <div className=''>
-        <Table>
+    <div className='App bg-dark'>
 
-          <thead>
-            <tr>
-              <th>#</th>
-              {words.map((word) => {
-                return (
-                  <th key={word}>{word}</th>
-                )
+
+      <div className='container'>
+
+        <Button variant='outline-primary' className='mt-3 mb-3' onClick={() => { showFilter ? setShowFilter(false) : setShowFilter(true) }}>Show Language Filter</Button>
+
+        {showFilter &&
+          <div className='container mt-2 mb-3'>
+            <hr className='mb-3' style={{ color: 'white' }} />
+            <div className='row'>
+              {languages.map((language, index) => {
+                if (englishAlphabetLanguages.includes(language)) {
+
+                  return (
+                    <Form className='col-3' key={index}>
+                      <Form.Check
+                        className='text-white'
+                        onClick={() => {
+                          let temp = languageSelection;
+                          temp[language] = languageSelection[language] ? 0 : 1;
+                          setLanguageSelection(temp)
+                        }}
+                        defaultChecked={languageSelection[language]}
+                        type='switch'
+                        id={language + 'Switch'}
+                        label={language}
+                      />
+                    </Form>
+                  )
+
+                } else {
+
+                  return (
+                    <Form className='col-3' key={index}>
+                      <Form.Check
+                        className='text-white'
+                        onClick={() => {
+                          let temp = languageSelection;
+                          temp[language] = languageSelection[language] ? 0 : 1;
+                          setLanguageSelection(temp)
+                        }}
+                        defaultChecked={languageSelection[language]}
+                        type='switch'
+                        id={language + 'Switch'}
+                        label={language}
+                      />
+                    </Form>
+                  )
+                }
+
               })}
-            </tr>
-          </thead>
+              <hr className='mt-3' style={{ color: 'white' }} />
+            </div>
+          </div>
+        }
 
-          <tbody>
-            {/* {languages.map((language) => { // Map language headers
-              return (
-                <tr key={language + ' Row'}>
-                  <td key={language + ' Header'}>{language}</td>
+        <Form.Group>
+          <Form.Label className='styled-white'>Enter List of Words (Comma Seperated)</Form.Label>
+          <Form.Control id='wordsControl' className='styled-white mb-3' />
+          <Button variant='outline-primary' className=' mb-3' onClick={() => {
+            let input = []
+            document.getElementById('wordsControl').value.split(',').forEach(word => input.push(word.trim()));
+            setWords(input);
+            (setTranslations(translateWords(languages, input)));
+            pingPage(1);
+          }}>Translate</Button>
+        </Form.Group>
 
-                  {translations.map((word) => { // Map words to their translations
-                    return (<td key={language + ' : ' + word}>{word}</td>)
+        {words &&
+          <Card className='p-1 bg-gray '>
+            <Table hover striped bordered responsive variant='dark' className=''>
+
+              <thead>
+                <tr>
+                  <th>#</th>
+                  {words.map((word) => {
+                    return (
+                      <th key={word}>{word}</th>
+                    )
                   })}
                 </tr>
-              )
-            })} */}
-          </tbody>
+              </thead>
 
-        </Table>
+              <tbody>
+
+                {Object.keys(languageSelection).map((language) => { // Map language headers
+                  if (languageSelection[language] === 1) {
+                    return (
+                      <tr key={language + ' Row'}>
+                        <td key={language + ' Header'}>{language}</td>
+
+                        {words.map((word) => { // Map words to their translations
+                          return (<td key={language + ' : ' + word}>{translations[language][word]}</td>)
+                        })}
+                      </tr>
+                    )
+                  }
+                })}
+              </tbody>
+
+            </Table>
+          </Card>
+        }
       </div>
-    </div>
+    </div >
   );
 }
 

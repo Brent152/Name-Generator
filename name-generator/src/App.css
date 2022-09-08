@@ -1,5 +1,9 @@
-.border {
-    border: 1px;
-    border-style: solid;
-    border-radius: 1px;
+.bg-gray {
+    background-color: rgb(55, 55, 56);
+}
+
+.styled-white {
+    border-color: white;
+    color: white;
+    background-color: #212529
 }
