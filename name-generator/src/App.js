@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import 'bootstrap/dist/css/bootstrap.css';
 import Table from 'react-bootstrap/Table';
 import translate from 'translate';
@@ -219,21 +219,38 @@ function App() {
     }, (timeBetween * 1000));
   }
 
-  const translateWords = (languages, words) => {
-    let curTranslations = {};
-    languages.forEach(async (language) => {
-      curTranslations[language] = {};
-      await words.forEach(async (word) => {
-        curTranslations[language][word] = await translate(word, language)
-      });
-    });
-    pingPage(2);
-    return curTranslations;
-  }
+  // const translateWords = (languages, words) => {
+  //   let curTranslations = {};
+  //   languages.forEach(async (language) => {
+  //     curTranslations[language] = {};
+  //     await words.forEach(async (word) => {
+  //       curTranslations[language][word] = await translate(word, language)
+  //     });
+  //   });
+  //   pingPage(2);
+  //   return curTranslations;
+  // }
+
 
   const [translations, setTranslations] = useState(() => {
-    return translateWords(languages, words);
+    return null;
   });
+
+  useEffect(() => {
+    async function translateWords(languages, words) {
+      let curTranslations = {};
+      languages.forEach(async (language) => {
+        curTranslations[language] = {};
+        words.forEach(async (word) => {
+          curTranslations[language][word] = await translate(word, language);
+        });
+      });
+      setTranslations(curTranslations)
+
+    }
+
+    translateWords(languages, words);
+  }, [words, languageSelection]);
 
 
 
@@ -302,12 +319,12 @@ function App() {
             let input = []
             document.getElementById('wordsControl').value.split(',').forEach(word => input.push(word.trim()));
             setWords(input);
-            (setTranslations(translateWords(languages, input)));
-            pingPage(1);
+            // (setTranslations(translateWords(languages, input)));
+            // pingPage(1);
           }}>Translate</Button>
         </Form.Group>
 
-        {words &&
+        {translations && words &&
           <Card className='p-1 bg-gray '>
             <Table hover striped bordered responsive variant='dark' className=''>
 
