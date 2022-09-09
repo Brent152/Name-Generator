@@ -260,10 +260,10 @@ function App() {
 
       <div className='container'>
 
-        <Button variant='outline-primary' className='mt-3 mb-3' onClick={() => { showFilter ? setShowFilter(false) : setShowFilter(true) }}>Show Language Filter</Button>
+        <Button variant='outline-primary' className='justify-content-end mt-3 mb-3' onClick={() => { showFilter ? setShowFilter(false) : setShowFilter(true) }}>Show Language Filter</Button>
 
         {showFilter &&
-          <div className='container mt-2 mb-3'>
+          <div className='row-1 container mt-2 mb-3'>
             <hr className='mb-3' style={{ color: 'white' }} />
             <div className='row'>
               {languages.map((language, index) => {
@@ -315,7 +315,7 @@ function App() {
         <Form.Group>
           <Form.Label className='styled-white'>Enter List of Words (Comma Seperated)</Form.Label>
           <Form.Control id='wordsControl' className='styled-white mb-3' />
-          <Button variant='outline-primary' className=' mb-3' onClick={() => {
+          <Button variant='outline-primary' className=' mb-3' style={{ width: '' }} onClick={() => {
             let input = []
             document.getElementById('wordsControl').value.split(',').forEach(word => input.push(word.trim()));
             setWords(input);
