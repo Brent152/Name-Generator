@@ -15,6 +15,23 @@ function App() {
   translate.engine = "google";
 
   const ourLanguages = [
+    'Afrikaans',
+    'Dutch',
+    'Finnish',
+    'Gaelic',
+    'German',
+    'Hungarian',
+    'Icelandic',
+    'Indonesian',
+    'Irish',
+    'Kurdish',
+    'Latin',
+    'Latvian',
+    'Norwegian',
+    'Polish',
+    'Romanian',
+    'Sundanese',
+    'Swedish'
 
   ]
 
@@ -271,7 +288,7 @@ function App() {
 
   const setOurSelection = () => {
     let temp = {};
-    for (const language in (languages)) {
+    for (const language of (languages)) {
       if (ourLanguages.includes(language)) {
         temp[language] = 1;
       } else {
