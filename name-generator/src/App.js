@@ -14,6 +14,10 @@ function App() {
   // Set up translator
   translate.engine = "google";
 
+  const ourLanguages = [
+
+  ]
+
   const englishAlphabetLanguages = [
     'Afrikaans',
     'Albanian',
@@ -58,7 +62,6 @@ function App() {
     'Romanian',
     'Samoan',
     'Gaelic',
-    'Serbian',
     'Shona',
     'Slovak',
     'Slovenian',
@@ -252,6 +255,37 @@ function App() {
     translateWords(languages, words);
   }, [words, languageSelection]);
 
+  const clearSelection = () => {
+    let temp = {};
+    for (const language in (languageSelection)) {
+      temp[language] = 0;
+    }
+    if (showFilter) {
+      setShowFilter(false);
+      setTimeout(() => {
+        setShowFilter(true);
+      }, 10)
+    }
+    setLanguageSelection(temp);
+  }
+
+  const setOurSelection = () => {
+    let temp = {};
+    for (const language in (languages)) {
+      if (ourLanguages.includes(language)) {
+        temp[language] = 1;
+      } else {
+        temp[language] = 0;
+      }
+    }
+    if (showFilter) {
+      setShowFilter(false);
+      setTimeout(() => {
+        setShowFilter(true);
+      }, 10)
+    }
+    setLanguageSelection(temp);
+  }
 
 
   return (
@@ -261,6 +295,8 @@ function App() {
       <div className='container'>
 
         <Button variant='outline-primary' className='justify-content-end mt-3 mb-3' onClick={() => { showFilter ? setShowFilter(false) : setShowFilter(true) }}>Show Language Filter</Button>
+        <Button variant='outline-primary' className='justify-content-end ms-3 mt-3 mb-3' onClick={() => { setOurSelection(); }}>Filter Our Favorites</Button>
+        <Button variant='outline-primary' className='justify-content-end ms-3 mt-3 mb-3' onClick={() => { clearSelection(); }}>Clear Language Selection</Button>
 
         {showFilter &&
           <div className='row-1 container mt-2 mb-3'>
