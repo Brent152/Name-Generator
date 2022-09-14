@@ -7,6 +7,8 @@ import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import './App.css';
 
+const GetSynonyms = require('synonyms');
+
 
 function App() {
 
@@ -207,14 +209,19 @@ function App() {
       'Words',
       'Above',
     ]
-
   });
 
-  const [reload, setReload] = useState(() => {
-    return 0;
-  })
+  const [synonyms, setSynonyms] = useState(() => {
+    return []
+  });
+
+
 
   const [showFilter, setShowFilter] = useState(() => {
+    return false;
+  });
+
+  const [showSynonyms, setShowSynonyms] = useState(() => {
     return false;
   });
 
@@ -229,27 +236,6 @@ function App() {
     }
     return temp;
   });
-
-  const pingPage = async (timeBetween) => {
-    setTimeout(function () {
-      setReload(reload + 1);
-      console.log(" --- Page Reload --- ")
-      setShowFilter(true);
-      setShowFilter(false);
-    }, (timeBetween * 1000));
-  }
-
-  // const translateWords = (languages, words) => {
-  //   let curTranslations = {};
-  //   languages.forEach(async (language) => {
-  //     curTranslations[language] = {};
-  //     await words.forEach(async (word) => {
-  //       curTranslations[language][word] = await translate(word, language)
-  //     });
-  //   });
-  //   pingPage(2);
-  //   return curTranslations;
-  // }
 
 
   const [translations, setTranslations] = useState(() => {
@@ -268,7 +254,6 @@ function App() {
       setTranslations(curTranslations)
 
     }
-
     translateWords(languages, words);
   }, [words, languageSelection]);
 
@@ -304,6 +289,14 @@ function App() {
     setLanguageSelection(temp);
   }
 
+  const formatGivenSynonyms = (list) => {
+    let result = "- ";
+    list.forEach((synonym) => {
+      result += synonym + ", "
+    })
+    return result.slice(0, -2);
+  }
+
 
   return (
     <div className='App bg-dark'>
@@ -312,7 +305,7 @@ function App() {
       <div className='container'>
 
         <Button variant='outline-primary' className='justify-content-end mt-3 mb-3' onClick={() => { showFilter ? setShowFilter(false) : setShowFilter(true) }}>Show Language Filter</Button>
-        <Button variant='outline-primary' className='justify-content-end ms-3 mt-3 mb-3' onClick={() => { setOurSelection(); }}>Filter Our Favorites</Button>
+        <Button variant='outline-primary' className='justify-content-end ms-3 mt-3 mb-3' onClick={() => { setOurSelection(); }}>Filter To Favorite Languages</Button>
         <Button variant='outline-primary' className='justify-content-end ms-3 mt-3 mb-3' onClick={() => { clearSelection(); }}>Clear Language Selection</Button>
 
         {showFilter &&
@@ -365,20 +358,60 @@ function App() {
           </div>
         }
 
-        <Form.Group>
+        <Form.Group className='mb-4'>
           <Form.Label className='styled-white'>Enter List of Words (Comma Seperated)</Form.Label>
           <Form.Control id='wordsControl' className='styled-white mb-3' />
-          <Button variant='outline-primary' className=' mb-3' style={{ width: '' }} onClick={() => {
+          <Button variant='outline-primary' className=' ' style={{ width: '' }} onClick={() => {
             let input = []
-            document.getElementById('wordsControl').value.split(',').forEach(word => input.push(word.trim()));
+            let rawInput = document.getElementById('wordsControl').value;
+            rawInput !== "" && rawInput.split(',').forEach(word => input.push(word.trim()));
             setWords(input);
             // (setTranslations(translateWords(languages, input)));
-            // pingPage(1);
           }}>Translate</Button>
+
+          <Button variant='outline-primary' className='ms-3' style={{ width: '' }} onClick={() => {
+            let input = []
+            let rawInput = document.getElementById('wordsControl').value;
+            rawInput !== "" && rawInput.split(',').forEach(word => input.push(word.trim()));
+            setWords(input);
+            let curSynonyms = {};
+            input.forEach((word) => {
+              try {
+                curSynonyms[word] = (Object.values(GetSynonyms(word)))[0];
+              } catch {
+                curSynonyms[word] = [word, 'No synonyms found']
+              }
+            });
+            setSynonyms(curSynonyms);
+            showSynonyms ? setShowSynonyms(false) : setShowSynonyms(true);
+          }}>Show Synonyms</Button>
         </Form.Group>
 
+        {showSynonyms &&
+          <div className=''>
+            <hr className='mb-3' style={{ color: 'white' }} />
+            
+            <div className='row'>
+              {words.map((word, index) => {
+                return (
+                  <div key={word + 'Synonyms'} className='d-flex'>
+                    <h5 style={{ color: 'white' }} key={word + " " + index}>{word}</h5>
+                    <p className='ms-2' style={{ color: 'lightgray' }}>
+                      {formatGivenSynonyms(synonyms[word].slice(1))}
+                    </p>
+
+                  </div>
+                )
+              })
+              }
+            </div>
+            <hr className='mb-3' style={{ color: 'white' }} />
+
+          </div>
+        }
+
         {translations && words &&
-          <Card className='p-1 bg-gray '>
+          <Card className='p-1 bg-gray mt-3'>
             <Table hover striped bordered responsive variant='dark' className=''>
 
               <thead>
@@ -405,6 +438,8 @@ function App() {
                         })}
                       </tr>
                     )
+                  } else {
+                    return null;
                   }
                 })}
               </tbody>
